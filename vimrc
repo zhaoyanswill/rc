@@ -63,6 +63,8 @@ nmap <leader>w :w!<cr>
 " set so=7
 set number
 set showcmd                     "Show incomplete cmds down the bottom
+"set colorcolumn=101
+"highlight ColorColumn ctermbg=7
 
 " Avoid garbled characters in Chinese language windows OS
 let $LANG='en' 
@@ -407,9 +409,11 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-"Plugin 'derekwyatt/vim-fswitch'
+Plugin 'derekwyatt/vim-fswitch'
 Plugin 'tpope/vim-fugitive'
 Plugin 'majutsushi/tagbar'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'simplyzhao/cscope_maps.vim'
 
 
 " All of your Plugins must be added before the following line
@@ -457,8 +461,45 @@ map <leader>nf :NERDTreeFind<cr>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
+set t_Co=256
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Tagbar
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <leader>tb :TagbarToggle<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NerdCommenter
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set timeoutlen=1000
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => YouCompleteMe
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_cache_omnifunc=0
+let g:ycm_seed_identifiers_with_syntax=1
+"let g:ycm_min_num_of_chars_for_completion=1
+set completeopt=longest,menu    "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif "离开插入模式后自动关闭预览窗口
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"    "回车即选中当前项
+nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>  
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>  
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>  
+
+""""""""""""""""""""""""""""""""""""""
+" specific for the docker container
+""""""""""""""""""""""""""""""""""""""
+set lines=97 columns=119
+nmap <F10> :!cscope -Rbq<CR> :cs reset<CR><CR>
+
+""""""""""""""""""""""""""""""""""""""
+" vim-fswitch
+""""""""""""""""""""""""""""""""""""""
+nmap <silent> <leader>A :FSHere<CR>
+nmap <silent> <leader>AK :FSSplitAbove<CR>
+nmap <silent> <leader>AJ :FSSplitBelow<CR>
+nmap <silent> <leader>AH :FSSplitLeft<CR>
+nmap <silent> <leader>AL :FSSplitRight<CR>

@@ -398,27 +398,42 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'scrooloose/nerdtree'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'derekwyatt/vim-fswitch'
-Plugin 'tpope/vim-fugitive'
-Plugin 'majutsushi/tagbar'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'simplyzhao/cscope_maps.vim'
+" set rtp+=~/.vim/bundle/Vundle.vim
+" call vundle#begin()
+call plug#begin('~/.vim/plugged')
 
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+"Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"Plug 'itchyny/lightline.vim'
+Plug 'derekwyatt/vim-fswitch'
+Plug 'tpope/vim-fugitive'
+Plug 'majutsushi/tagbar'
+
+Plug 'Valloric/YouCompleteMe', {'do':'./install.py --clang-completer --java-completer'}
+Plug 'Shougo/echodoc.vim'
+Plug 'simplyzhao/cscope_maps.vim'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus'
+Plug 'skywind3000/vim-preview'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+Plug 'tpope/vim-surround'
+Plug 'Shougo/echodoc.vim'
+Plug 'skywind3000/asyncrun.vim'
+
+Plug 'altercation/vim-colors-solarized'
+Plug 'crusoexia/vim-monokai'
+
+Plug 'vim-scripts/c.vim'
+Plug 'vim-scripts/a.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'fatih/vim-go'
+
+
+call plug#end()
 
 "
 "" Brief help
@@ -435,14 +450,14 @@ filetype plugin indent on    " required
 """"""""""""""""""""""""""""""
 " => CTRL-P
 """"""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
+"let g:ctrlp_working_path_mode = 0
 
-map <leader>j :CtrlP<cr>
+"map <leader>j :CtrlP<cr>
 "let g:ctrlp_map = '<c-f>'
 "map <c-b> :CtrlPBuffer<cr>
 
-let g:ctrlp_max_height = 20
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
+"let g:ctrlp_max_height = 20
+"let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -460,13 +475,26 @@ map <leader>nf :NERDTreeFind<cr>
 " => vim-airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+"let g:airline_powerline_fonts = 1
+let g:airline_theme='powerlineish'
 set t_Co=256
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Tagbar
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <leader>tb :TagbarToggle<CR>
+"add R support
+let g:tagbar_type_r = {
+    \ 'ctagstype' : 'r',
+    \ 'kinds'     : [
+        \ 'f:Functions',
+        \ 'g:GlobalVariables',
+        \ 'v:FunctionVariables',
+    \ ]
+    \ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => NerdCommenter
@@ -476,23 +504,61 @@ set timeoutlen=1000
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => YouCompleteMe
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_collect_identifiers_from_tags_files=1
+let g:ycm_complete_in_strings=1
 let g:ycm_cache_omnifunc=0
 let g:ycm_seed_identifiers_with_syntax=1
+" java support
+let g:syntastic_java_checkers = []
+let g:EclimFileTypeValidate = 0
 "let g:ycm_min_num_of_chars_for_completion=1
 set completeopt=longest,menu    "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif "离开插入模式后自动关闭预览窗口
 inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"    "回车即选中当前项
-nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>  
-nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>  
-nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>  
+"nnoremap <leader>gc :YcmCompleter GoToDeclaration<CR>  
+"nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>  
+"nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>  
+" 使用 Ctrl+y 主动触发语义补全
+" noremap <c-y> <NOP>
+" 修改补全列表配色
+"highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
+"highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
+
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+            \ 'cs,lua,javascript': ['re!\w{2}'],
+            \ }
+
+let g:ycm_filetype_whitelist = {
+            \ "c":1,
+            \ "cpp":1,
+            \ "go":1,
+            \ "python":1,
+            \ "r":1,
+            \ "java":1,
+            \ "sh":1,
+            \ "zsh":1,
+            \ }
+
+let g:ycm_filetype_blacklist = {
+        \ 'markdown' : 1,
+        \ 'text' : 1,
+        \ 'pandoc' : 1,
+        \ 'infolog' : 1,
+        \}
 
 """"""""""""""""""""""""""""""""""""""
 " specific for the docker container
 """"""""""""""""""""""""""""""""""""""
-set lines=97 columns=119
+"set lines=97 columns=118
+autocmd GUIEnter * simalt ~x
+
 nmap <F10> :!cscope -Rbq<CR> :cs reset<CR><CR>
 
 """"""""""""""""""""""""""""""""""""""
@@ -503,3 +569,107 @@ nmap <silent> <leader>AK :FSSplitAbove<CR>
 nmap <silent> <leader>AJ :FSSplitBelow<CR>
 nmap <silent> <leader>AH :FSSplitLeft<CR>
 nmap <silent> <leader>AL :FSSplitRight<CR>
+
+""""""""""""""""""""""""""""""""""""""
+" gtags
+""""""""""""""""""""""""""""""""""""""
+set tags=./tags;,tags;
+let $GTAGSLABEL = 'pygments'
+let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+
+" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+let g:gutentags_project_root = ['.git','.root','.svn','.hg','.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+    let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+    let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = []
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行
+let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+" " 避免多个项目数据库相互干扰,使用plus插件解决问题
+let g:gutentags_auto_add_gtags_cscope = 0
+
+"let g:gutentags_define_advanced_commands = 1
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
+
+"let g:gutentags_define_advanced_commands = 1
+
+" default keymap
+"<leader>cs   Find symbol (reference) under cursor
+"<leader>cg   Find symbol definition under cursor
+"<leader>cd   Functions called by this function
+"<leader>cc   Functions calling this function
+"<leader>ct   Find text string under cursor
+"<leader>ce   Find egrep pattern under cursor
+"<leader>cf   Find file name under cursor
+"<leader>ci   Find files #including the file name under cursor
+"<leader>ca   Find places where current symbol is assigned
+let g:gutentags_plus_nomap = 1
+noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+
+
+"----------vim-preview配置-----------------------------------------
+"P 预览 大p关闭
+autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+
+" -----------LeaderF 模糊文件查找-------------------------------
+" Ctrl + p 打开文件搜索
+let g:Lf_ShortcutF = '<c-p>'
+noremap <Leader>ff :LeaderfFunction<cr>
+noremap <Leader>fb :LeaderfBuffer<cr>
+noremap <Leader>ft :LeaderfTag<cr>
+noremap <Leader>fm :LeaderfMru<cr>
+noremap <Leader>fl :LeaderfLine<cr>
+
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
+let g:Lf_NormalMap = {
+    \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
+    \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
+    \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
+    \ "Tag":    [["<ESC>", ':exec g:Lf_py "tagExplManager.quit()"<CR>']],
+    \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
+    \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
+    \ }
+
+" echodoc
+set noshowmode
+

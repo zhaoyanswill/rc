@@ -190,6 +190,8 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+" for R files, 2 spaces
+autocmd Filetype r setlocal ts=2 sw=2 expandtab
 
 " Linebreak on 500 characters
 " set lbr
@@ -256,7 +258,8 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers 
 try
-  set switchbuf=useopen,usetab,newtab
+  "set switchbuf=useopen,usetab,newtab
+  set switchbuf=useopen
   set stal=2
 catch
 endtry
@@ -403,12 +406,12 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 
 
-"Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-"Plug 'itchyny/lightline.vim'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
+Plug 'bling/vim-bufferline'
 Plug 'derekwyatt/vim-fswitch'
 Plug 'tpope/vim-fugitive'
 Plug 'majutsushi/tagbar'
@@ -481,6 +484,26 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 "let g:airline_powerline_fonts = 1
 let g:airline_theme='powerlineish'
 set t_Co=256
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => lightline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:lightline = {
+            \   'colorscheme': 'wombat',
+            \   'active': {
+            \     'left':[ [ 'mode', 'paste' ],
+            \              [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+            \   },
+            \   'component': {
+            \     'lineinfo': '%3l:%-2c',
+            \   },
+            \   'component_function': {
+            \     'gitbranch': 'fugitive#head',
+            \   },
+            \ }
+set laststatus=2
+set showtabline=0
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Tagbar
@@ -641,6 +664,7 @@ noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
 "P 预览 大p关闭
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+autocmd FileType qf nnoremap <silent><buffer> <CR> <CR> :cclose<cr>
 
 " -----------LeaderF 模糊文件查找-------------------------------
 " Ctrl + p 打开文件搜索
